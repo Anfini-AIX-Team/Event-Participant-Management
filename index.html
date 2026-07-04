@@ -7,39 +7,72 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f0f2f5;
+  --surface: #ffffff;
+  --border: #e5e7eb;
+  --accent: #1d4ed8;
+  --accent-light: #dbeafe;
+  --text-primary: #1a1d23;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+}
 body {
   font-family: 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
-  background: #f0f2f5;
-  color: #1a1d23;
+  background: var(--bg);
+  color: var(--text-primary);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* ── Header ── */
-header {
-  background: #1a1d23;
-  padding: 0 24px;
+/* ── Header（共通フォーマット：高さ68px固定、ロゴ36px、タイトル16px/600） ── */
+header.app-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-sizing: border-box;
+  height: 68px;
+  padding: 0 28px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  height: 52px;
+  gap: 12px;
   flex-shrink: 0;
   z-index: 20;
 }
-header h1 { color: #fff; font-size: 15px; font-weight: 600; }
+.logo { display: flex; align-items: center; gap: 12px; height: 36px; }
+.logo-badge {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  flex: none;
+}
+.logo-badge svg { width: 22px; height: 22px; }
+.app-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin: 0 20px 0 0; white-space: nowrap; line-height: 1; }
+.header-center { display: flex; align-items: center; height: 36px; }
+.header-right { margin-left: auto; display: flex; align-items: center; height: 36px; gap: 12px; }
+
 .file-badges { display: flex; gap: 8px; align-items: center; }
 .file-badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 600; font-family: monospace; }
-.badge-old { background: #374151; color: #9ca3af; }
-.badge-new { background: #1d4ed8; color: #bfdbfe; }
-.badge-arrow { color: #6b7280; font-size: 13px; }
+.badge-old { background: #f3f4f6; color: #6b7280; }
+.badge-new { background: var(--accent-light); color: var(--accent); }
+.badge-arrow { color: var(--text-muted); font-size: 13px; }
+
+.portal-btn {
+  height: 32px; box-sizing: border-box; display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 600; color: var(--text-secondary);
+  background: none; border: 1px solid var(--border); border-radius: 8px;
+  padding: 0 12px; cursor: pointer; transition: background .15s, color .15s;
+}
+.portal-btn:hover { background: #f3f4f6; color: var(--text-primary); }
 
 /* ── App layout ── */
 .app-body {
   display: flex;
   flex: 1;
   overflow: hidden;
-  height: calc(100vh - 52px);
+  height: calc(100vh - 68px);
 }
 
 /* ── Sidebar ── */
@@ -63,6 +96,7 @@ header h1 { color: #fff; font-size: 15px; font-weight: 600; }
 .clear-history-btn {
   font-size: 11px; color: #9ca3af; background: none; border: none;
   cursor: pointer; padding: 2px 6px; border-radius: 4px;
+  display: inline-flex; align-items: center; gap: 4px;
 }
 .clear-history-btn:hover { background: #fee2e2; color: #dc2626; }
 
@@ -77,7 +111,7 @@ header h1 { color: #fff; font-size: 15px; font-weight: 600; }
   font-size: 12px;
   color: #d1d5db;
 }
-.history-empty .he-icon { font-size: 28px; margin-bottom: 8px; }
+.history-empty .he-icon { margin-bottom: 8px; display: flex; justify-content: center; }
 
 .h-item {
   padding: 10px 16px;
@@ -104,7 +138,7 @@ header h1 { color: #fff; font-size: 15px; font-weight: 600; }
 .h-badge-status  { background: #ede9fe; color: #7c3aed; }
 .h-item-del {
   position: absolute; top: 8px; right: 8px;
-  background: none; border: none; font-size: 13px;
+  background: none; border: none;
   color: #d1d5db; cursor: pointer; padding: 2px 4px;
   border-radius: 4px; display: none;
 }
@@ -136,7 +170,7 @@ header h1 { color: #fff; font-size: 15px; font-weight: 600; }
 }
 .drop-zone:hover { border-color: #4f8ef7; background: #f0f5ff; }
 .drop-zone.loaded { border-color: #22c55e; border-style: solid; background: #f0fdf4; }
-.dz-icon { font-size: 28px; margin-bottom: 8px; }
+.dz-icon { margin-bottom: 8px; display: flex; justify-content: center; color: #6b7280; }
 .dz-label { font-size: 13px; color: #374151; font-weight: 600; margin-bottom: 4px; }
 .dz-sub { font-size: 12px; color: #9ca3af; }
 .dz-file { font-size: 11px; color: #16a34a; font-weight: 600; margin-top: 8px; word-break: break-all; }
@@ -145,7 +179,7 @@ input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
   position: absolute; top: 8px; right: 8px;
   width: 22px; height: 22px; border-radius: 50%;
   background: #fee2e2; color: #dc2626;
-  border: none; font-size: 12px; line-height: 1;
+  border: none;
   cursor: pointer; display: none; align-items: center; justify-content: center;
   z-index: 10;
 }
@@ -158,7 +192,7 @@ input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
   border: 1px solid #e5e7eb;
   display: none;
 }
-.key-section h3 { font-size: 12px; font-weight: 700; color: #6b7280; margin-bottom: 10px; text-transform: uppercase; letter-spacing: .05em; }
+.key-section h3 { font-size: 12px; font-weight: 700; color: #6b7280; margin-bottom: 10px; text-transform: uppercase; letter-spacing: .05em; display: flex; align-items: center; gap: 5px; }
 .key-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .key-chip {
   display: flex; align-items: center; gap: 5px;
@@ -218,7 +252,7 @@ input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .section { max-width: 860px; margin: 20px auto 0; padding: 0 24px 40px; display: none; width: 100%; }
 .section.active { display: block; }
 .section-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.section-title { font-size: 14px; font-weight: 700; }
+.section-title { font-size: 14px; font-weight: 700; display: flex; align-items: center; }
 .section-count {
   font-size: 11px; font-weight: 600;
   padding: 2px 8px; border-radius: 20px;
@@ -244,14 +278,14 @@ input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .card-icon {
   width: 34px; height: 34px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 15px;
 }
-.card-added   .card-icon { background: #dcfce7; }
-.card-removed .card-icon { background: #fee2e2; }
-.card-date    .card-icon { background: #fef3c7; }
-.card-status  .card-icon { background: #ede9fe; }
+.card-added   .card-icon { background: #dcfce7; color: #16a34a; }
+.card-removed .card-icon { background: #fee2e2; color: #dc2626; }
+.card-date    .card-icon { background: #fef3c7; color: #d97706; }
+.card-status  .card-icon { background: #ede9fe; color: #7c3aed; }
 .card-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
-.card-meta { font-size: 12px; color: #6b7280; display: flex; flex-wrap: wrap; gap: 8px; }
+.card-meta { font-size: 12px; color: #6b7280; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.card-meta span { display: inline-flex; align-items: center; gap: 3px; }
 .card-id { font-size: 10px; color: #9ca3af; font-family: monospace; white-space: nowrap; }
 
 .date-change {
@@ -272,7 +306,7 @@ input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .pill-other   { background: #f3f4f6; color: #374151; }
 
 .empty { text-align: center; padding: 40px 20px; color: #9ca3af; font-size: 13px; }
-.empty-icon { font-size: 36px; margin-bottom: 10px; }
+.empty-icon { margin-bottom: 10px; display: flex; justify-content: center; }
 
 .back-btn {
   display: inline-flex; align-items: center; gap: 6px;
@@ -295,19 +329,29 @@ input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 </head>
 <body>
 
-<header>
-  <h1>イベント参加者変更管理</h1>
-  <div style="display:flex;align-items:center;gap:12px">
+<header class="app-header">
+  <div class="logo">
+    <span class="logo-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3 4 7l4 4"></path><path d="M4 7h16"></path><path d="M16 21l4-4-4-4"></path><path d="M20 17H4"></path>
+      </svg>
+    </span>
+    <h1 class="app-title">イベント参加者変更管理</h1>
+  </div>
+
+  <div class="header-center">
     <div class="file-badges" id="headerBadges" style="display:none">
       <span class="file-badge badge-old" id="badge1">—</span>
       <span class="badge-arrow">→</span>
       <span class="file-badge badge-new" id="badge2">—</span>
     </div>
-    <button onclick="if(window.opener && !window.opener.closed){ window.opener.focus(); window.close(); } else { window.location.href='https://anfini-aix-team.github.io/Top/'; }"
-        style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#9ca3af;text-decoration:none;background:#2d3748;padding:5px 12px;border-radius:8px;border:none;cursor:pointer;transition:background .15s;"
-        onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#2d3748'">
-  ポータルへ戻る
-</button>
+  </div>
+
+  <div class="header-right">
+    <button class="portal-btn" onclick="if(window.opener && !window.opener.closed){ window.opener.focus(); window.close(); } else { window.location.href='https://anfini-aix-team.github.io/Top/'; }">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+      ポータルへ戻る
+    </button>
   </div>
 </header>
 
@@ -317,11 +361,11 @@ input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
   <aside class="sidebar">
     <div class="sidebar-head">
       <h2>比較履歴</h2>
-      <button class="clear-history-btn" onclick="clearAllHistory()" title="履歴をすべて削除">全削除</button>
+      <button class="clear-history-btn" onclick="clearAllHistory()" title="履歴をすべて削除"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>全削除</button>
     </div>
     <div class="history-list" id="historyList">
       <div class="history-empty" id="historyEmpty">
-        <div class="he-icon">🕐</div>
+        <div class="he-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
         比較履歴がありません
       </div>
     </div>
@@ -337,16 +381,16 @@ input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
       <div class="upload-grid">
         <div class="drop-zone" id="dz1">
-          <button class="dz-delete" onclick="clearFile(event,1)">✕</button>
-          <div class="dz-icon" id="dzIcon1">📄</div>
+          <button class="dz-delete" onclick="clearFile(event,1)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+          <div class="dz-icon" id="dzIcon1"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div>
           <div class="dz-label">旧ファイル（Before）</div>
           <div class="dz-sub">CSV / Excel をアップロード</div>
           <div class="dz-file" id="fn1"></div>
           <input type="file" id="f1" accept=".csv,.xlsx,.xls" onchange="onFile(1)">
         </div>
         <div class="drop-zone" id="dz2">
-          <button class="dz-delete" onclick="clearFile(event,2)">✕</button>
-          <div class="dz-icon" id="dzIcon2">📄</div>
+          <button class="dz-delete" onclick="clearFile(event,2)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+          <div class="dz-icon" id="dzIcon2"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div>
           <div class="dz-label">新ファイル（After）</div>
           <div class="dz-sub">CSV / Excel をアップロード</div>
           <div class="dz-file" id="fn2"></div>
@@ -355,7 +399,7 @@ input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
       </div>
 
       <div class="key-section" id="keySection">
-        <h3>🔑 行の同一性を判定するキー列（複数選択可）</h3>
+        <h3><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4a5 5 0 1 0-7 7L4 19v3h3l8-8"></path><path d="m14.5 6.5 3 3"></path></svg>行の同一性を判定するキー列（複数選択可）</h3>
         <div class="key-chips" id="keyChips"></div>
       </div>
       <button class="run-btn" id="runBtn" onclick="runDiff()">差分を分析する →</button>
@@ -390,28 +434,28 @@ input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
       <div class="section active" id="sec-added">
         <div class="section-head">
-          <span class="section-title">🟢 新規申込（増えた候補者）</span>
+          <span class="section-title"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#22c55e;margin-right:7px;flex:none;"></span>新規申込（増えた候補者）</span>
           <span class="section-count" id="sc-added"></span>
         </div>
         <div class="cards" id="cards-added"></div>
       </div>
       <div class="section" id="sec-removed">
         <div class="section-head">
-          <span class="section-title">🔴 キャンセル・離脱（減った候補者）</span>
+          <span class="section-title"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#ef4444;margin-right:7px;flex:none;"></span>キャンセル・離脱（減った候補者）</span>
           <span class="section-count" id="sc-removed"></span>
         </div>
         <div class="cards" id="cards-removed"></div>
       </div>
       <div class="section" id="sec-date">
         <div class="section-head">
-          <span class="section-title">🟡 日程変更</span>
+          <span class="section-title"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#f59e0b;margin-right:7px;flex:none;"></span>日程変更</span>
           <span class="section-count" id="sc-date"></span>
         </div>
         <div class="cards" id="cards-date"></div>
       </div>
       <div class="section" id="sec-status">
         <div class="section-head">
-          <span class="section-title">🟣 ステータス変更</span>
+          <span class="section-title"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#8b5cf6;margin-right:7px;flex:none;"></span>ステータス変更</span>
           <span class="section-count" id="sc-status"></span>
         </div>
         <div class="cards" id="cards-status"></div>
@@ -422,6 +466,29 @@ input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 </div>
 
 <script>
+// ══════════════════════════════════════════════════════
+//  ICONS（絵文字を廃止し、統一されたラインアイコンに置き換え）
+// ══════════════════════════════════════════════════════
+function icon(name, size) {
+  size = size || 16;
+  const paths = {
+    x: '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>',
+    fileText: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line>',
+    barChart: '<line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line>',
+    calendar: '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>',
+    clipboardList: '<rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="16" x2="15" y2="16"></line>',
+    mail: '<rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 6-10 7L2 6"></path>',
+    checkCircle: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>',
+    clock: '<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>',
+    refreshCw: '<polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path><path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>',
+    bell: '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path>',
+    plus: '<line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>',
+    minus: '<line x1="5" y1="12" x2="19" y2="12"></line>',
+    key: '<path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4a5 5 0 1 0-7 7L4 19v3h3l8-8"></path><path d="m14.5 6.5 3 3"></path>'
+  };
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex:none">${paths[name]||''}</svg>`;
+}
+
 // ══════════════════════════════════════════════════════
 //  HISTORY  (localStorage)
 // ══════════════════════════════════════════════════════
@@ -490,7 +557,7 @@ function renderHistory() {
       <div class="h-item-date">${dateStr}</div>
       <div class="h-item-files">${esc(h.file1)} → ${esc(h.file2)}</div>
       <div class="h-item-badges">${badges || '<span style="font-size:10px;color:#d1d5db">差分なし</span>'}</div>
-      <button class="h-item-del" title="削除">✕</button>`;
+      <button class="h-item-del" title="削除">${icon('x',13)}</button>`;
     div.querySelector('.h-item-del').onclick = (e) => deleteHistoryItem(h.id, e);
     div.onclick = () => restoreHistory(h.id);
     list.appendChild(div);
@@ -583,9 +650,9 @@ function splitLine(line) {
   return res;
 }
 
-function fileIcon(name) {
+function fileIconSvg(name) {
   const ext = (name || '').split('.').pop().toLowerCase();
-  return (ext === 'xlsx' || ext === 'xls') ? '📊' : '📄';
+  return (ext === 'xlsx' || ext === 'xls') ? icon('barChart', 28) : icon('fileText', 28);
 }
 
 // ══════════════════════════════════════════════════════
@@ -602,7 +669,7 @@ function clearFile(e, slot) {
   document.getElementById('f' + slot).value = '';
   document.getElementById('fn' + slot).textContent = '';
   document.getElementById('dz' + slot).classList.remove('loaded');
-  document.getElementById('dzIcon' + slot).textContent = '📄';
+  document.getElementById('dzIcon' + slot).innerHTML = icon('fileText', 28);
   document.getElementById('keySection').style.display = 'none';
   document.getElementById('runBtn').style.display = 'none';
 }
@@ -611,7 +678,7 @@ function onFile(slot) {
   const file = document.getElementById('f' + slot).files[0];
   if (!file) return;
   fileNames[slot - 1] = file.name.replace(/\.(csv|xlsx|xls)$/i, '').replace(/_/g, ' ');
-  document.getElementById('dzIcon' + slot).textContent = fileIcon(file.name);
+  document.getElementById('dzIcon' + slot).innerHTML = fileIconSvg(file.name);
   parseFile(file, parsed => {
     if (slot === 1) csv1 = parsed; else csv2 = parsed;
     document.getElementById('fn' + slot).textContent = file.name;
@@ -729,10 +796,10 @@ function runDiff() {
 function renderCards(containerId, rows, type, cols) {
   const el = document.getElementById(containerId);
   if (!rows.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">✅</div>該当する候補者はいません</div>`;
+    el.innerHTML = `<div class="empty"><div class="empty-icon">${icon('checkCircle',32)}</div>該当する候補者はいません</div>`;
     return;
   }
-  const icons = { added: '➕', removed: '➖' };
+  const icons = { added: icon('plus',16), removed: icon('minus',16) };
   el.innerHTML = rows.map(r => {
     const name    = cols.nameCol  ? esc(r[cols.nameCol]  || '—') : '—';
     const event   = cols.eventCol ? esc(r[cols.eventCol] || '')  : '';
@@ -745,9 +812,9 @@ function renderCards(containerId, rows, type, cols) {
       <div>
         <div class="card-name">${name}</div>
         <div class="card-meta">
-          ${date  ? `<span>📅 ${date}</span>` : ''}
-          ${event ? `<span>📋 ${event}</span>` : ''}
-          ${email ? `<span>✉️ ${email}</span>` : ''}
+          ${date  ? `<span>${icon('calendar',12)} ${date}</span>` : ''}
+          ${event ? `<span>${icon('clipboardList',12)} ${event}</span>` : ''}
+          ${email ? `<span>${icon('mail',12)} ${email}</span>` : ''}
         </div>
         ${updated ? `<div class="card-meta" style="margin-top:4px;color:#9ca3af">申込更新: ${updated}</div>` : ''}
       </div>
@@ -758,7 +825,7 @@ function renderCards(containerId, rows, type, cols) {
 
 function renderDateCards(containerId, items, cols) {
   const el = document.getElementById(containerId);
-  if (!items.length) { el.innerHTML = `<div class="empty"><div class="empty-icon">📅</div>日程変更はありません</div>`; return; }
+  if (!items.length) { el.innerHTML = `<div class="empty"><div class="empty-icon">${icon('calendar',32)}</div>日程変更はありません</div>`; return; }
   el.innerHTML = items.map(({ r1, r2 }) => {
     const name  = cols.nameCol  ? esc(r2[cols.nameCol]  || '—') : '—';
     const event = cols.eventCol ? esc(r2[cols.eventCol] || '') : '';
@@ -767,12 +834,12 @@ function renderDateCards(containerId, items, cols) {
     const nd    = cols.dateCol  ? esc(r2[cols.dateCol]  || '') : '';
     const id    = [...selectedKeys].map(k => esc(r2[k] || '')).join(' / ');
     return `<div class="card card-date">
-      <div class="card-icon">🔄</div>
+      <div class="card-icon">${icon('refreshCw',16)}</div>
       <div>
         <div class="card-name">${name}</div>
         <div class="card-meta">
-          ${event ? `<span>📋 ${event}</span>` : ''}
-          ${email ? `<span>✉️ ${email}</span>` : ''}
+          ${event ? `<span>${icon('clipboardList',12)} ${event}</span>` : ''}
+          ${email ? `<span>${icon('mail',12)} ${email}</span>` : ''}
         </div>
         <div class="date-change">
           <span class="date-old">${od}</span>
@@ -787,7 +854,7 @@ function renderDateCards(containerId, items, cols) {
 
 function renderStatusCards(containerId, items, cols) {
   const el = document.getElementById(containerId);
-  if (!items.length) { el.innerHTML = `<div class="empty"><div class="empty-icon">🔄</div>ステータス変更はありません</div>`; return; }
+  if (!items.length) { el.innerHTML = `<div class="empty"><div class="empty-icon">${icon('bell',32)}</div>ステータス変更はありません</div>`; return; }
   el.innerHTML = items.map(({ r1, r2, s1, s2 }) => {
     const name  = cols.nameCol  ? esc(r2[cols.nameCol]  || '—') : '—';
     const event = cols.eventCol ? esc(r2[cols.eventCol] || '') : '';
@@ -796,13 +863,13 @@ function renderStatusCards(containerId, items, cols) {
     const id    = [...selectedKeys].map(k => esc(r2[k] || '')).join(' / ');
     const pc = s => /キャンセル/.test(s) ? 'pill-cancel' : /申し込み/.test(s) ? 'pill-applied' : 'pill-other';
     return `<div class="card card-status">
-      <div class="card-icon">🔔</div>
+      <div class="card-icon">${icon('bell',16)}</div>
       <div>
         <div class="card-name">${name}</div>
         <div class="card-meta">
-          ${date  ? `<span>📅 ${date}</span>` : ''}
-          ${event ? `<span>📋 ${event}</span>` : ''}
-          ${email ? `<span>✉️ ${email}</span>` : ''}
+          ${date  ? `<span>${icon('calendar',12)} ${date}</span>` : ''}
+          ${event ? `<span>${icon('clipboardList',12)} ${event}</span>` : ''}
+          ${email ? `<span>${icon('mail',12)} ${email}</span>` : ''}
         </div>
         <div class="status-change">
           <span class="pill ${pc(s1)}">${esc(s1)}</span>
@@ -834,7 +901,7 @@ function goUpload() {
   ['f1','f2'].forEach(id => document.getElementById(id).value = '');
   ['fn1','fn2'].forEach(id => document.getElementById(id).textContent = '');
   ['dz1','dz2'].forEach(id => document.getElementById(id).classList.remove('loaded'));
-  ['dzIcon1','dzIcon2'].forEach(id => document.getElementById(id).textContent = '📄');
+  ['dzIcon1','dzIcon2'].forEach(id => document.getElementById(id).innerHTML = icon('fileText', 28));
   document.getElementById('keySection').style.display = 'none';
   document.getElementById('runBtn').style.display = 'none';
   document.getElementById('headerBadges').style.display = 'none';
